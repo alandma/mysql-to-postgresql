@@ -1,0 +1,28 @@
+version: "3.7"
+services:
+  
+  postgres-in:
+    build: 
+      context: ./postgresdb
+    environment: 
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: Admin#1
+      POSTGRES_DB: pgdb
+    ports: 
+      - "5421:5432"
+  
+  mysql-source:
+    build: 
+      context: ./mysqldb
+    environment:
+      MYSQL_ROOT_PASSWORD: Admin#1
+      MYSQL_DATABASE: mysqldb
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: Admin#1
+    ports:
+      - "3377:3306"
+  
+  pgloader:
+    build:
+      context: ./pgloader
+    command: ./wait-for.sh mysql-source:3306 -t 0 -- bash -c "./pgloader.sh"
